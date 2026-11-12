@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+/* Attractaris — flat, dense, DAW-style workspace.
+   Neutral greys carry the UI; the logo's cyan is reserved for selection and "active" state.
+   No glows, no shadows, no decorative motion. */
+@theme {
+  --color-edge: #0d0d0f; /* separators between panes */
+  --color-well: #131315; /* recessed areas: lanes, meters, LCD */
+  --color-base: #19191c; /* app background */
+  --color-panel: #212125; /* panes */
+  --color-raised: #2a2a2f; /* buttons, inputs */
+  --color-hover: #333339;
+  --color-line: #3a3a41;
+  --color-text: #d2d2d8;
+  --color-dim: #8d8d97;
+  --color-faint: #5e5e68;
+
+  --color-accent: #129ec4; /* logo cyan */
+  --color-accent-soft: #12485a;
+  --color-rec: #d4443c;
+  --color-mon: #d9a03a;
+
+  --color-stripe: #1c1c20; /* alternate table rows */
+  --color-fader: #9a9aa3;
+  --color-wave: #5fb9d6;
+  --color-wave-rec: #e07a73;
+
+  --color-meter-lo: #3c9f5a;
+  --color-meter-mid: #c9ac3a;
+  --color-meter-hi: #d4443c;
+  --color-meter-lo-off: #17251c;
+  --color-meter-mid-off: #29261a;
+  --color-meter-hi-off: #2b1716;
+
+  --font-sans: "Segoe UI Variable Text", "Segoe UI", "Leelawadee UI", "Noto Sans Thai", system-ui, sans-serif;
+  --font-mono: "Cascadia Mono", "Consolas", ui-monospace, monospace;
+}
+
+/* Light theme: same structure, inverted values. Contrast kept at DAW density. */
+:root[data-theme="light"] {
+  --color-edge: #c3c3ca;
+  --color-well: #fbfbfc;
+  --color-base: #e8e8ec;
+  --color-panel: #f1f1f4;
+  --color-raised: #ffffff;
+  --color-hover: #e1e1e7;
+  --color-line: #cdcdd4;
+  --color-text: #1c1c21;
+  --color-dim: #5c5c66;
+  --color-faint: #9696a0;
+
+  --color-accent: #0d87aa;
+  --color-accent-soft: #cfe8f1;
+  --color-rec: #c9372f;
+  --color-mon: #dc9628;
+
+  --color-stripe: #ededf1;
+  --color-fader: #8c8c96;
+  --color-wave: #1b8db0;
+  --color-wave-rec: #c9443a;
+
+  --color-meter-lo: #2f9a52;
+  --color-meter-mid: #c7a12a;
+  --color-meter-hi: #c9372f;
+  --color-meter-lo-off: #dbe9df;
+  --color-meter-mid-off: #efe8cf;
+  --color-meter-hi-off: #f1dcda;
+
+  color-scheme: light;
+}
+:root {
+  color-scheme: dark;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+    overflow: hidden;
+  }
+  body {
+    @apply bg-base text-[12px] text-text font-sans antialiased select-none;
+  }
+  input,
+  select {
+    @apply select-auto;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-well);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-line);
+  }
+}
+
+/* Pane header strip (Inspector sections, lower-zone tabs, strip title). */
+@utility pane-title {
+  @apply flex h-6 items-center border-b border-edge bg-panel px-2 text-[10px] font-semibold tracking-[0.12em] text-dim uppercase;
+}
+/* Small flat control. */
+@utility ctl {
+  @apply inline-flex h-6 items-center justify-center gap-1 rounded-[3px] border border-line bg-raised px-2 text-[11px] text-text hover:bg-hover disabled:cursor-not-allowed disabled:opacity-40;
+}
+@utility ctl-on {
+  @apply border-accent bg-accent-soft text-text;
+}
+@utility field {
+  @apply h-6 w-full rounded-[3px] border border-line bg-well px-1.5 text-[11px] text-text outline-none focus:border-accent disabled:opacity-40;
+}
+@utility lcd {
+  @apply rounded-[3px] border border-edge bg-well font-mono tabular-nums;
+}
