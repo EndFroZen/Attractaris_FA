@@ -2,12 +2,16 @@
 //
 //   input stream → splitter ─ ch0 → pick0 ┐
 //                           └ ch1 → pick1 ┴→ mono ─→ monitorGain → output device
-//                                                ├→ recDest (MediaRecorder)
+//                                                ├→ recDest (MediaRecorder → WebM/Opus)
+//                                                ├→ pcm worklet (raw PCM → WAV)
 //                                                ├→ meter analyser
 //                                                └→ tuner analyser
 // "mono" is upmixed to both ears, so a guitar on Input 1 is heard in both.
+import workletUrl from "./recorder-worklet.js?url";
+import { encodeWav } from "./wav.js";
 
 export const DEFAULT_SETTINGS = {
+  format: "wav", // recording format: "wav" (24-bit PCM, lossless) | "webm" (Opus, compressed)
   inputId: "",
   outputId: "",
   channel: "0", // "0" = Input 1, "1" = Input 2, "mix"
@@ -27,7 +31,6 @@ class AudioEngine {
   #recPhase = "idle";
   #cancelStart = false;
   #recorder = null;
-  #chunks = [];
   #recStartedAt = 0;
   #meterBuf = null;
   #tunerBuf = null;
@@ -100,6 +103,9 @@ class AudioEngine {
     const tuner = ctx.createAnalyser();
     tuner.fftSize = 4096; // ~85 ms window: enough periods of low E (82 Hz)
 
+    await ctx.audioWorklet.addModule(workletUrl);
+    const pcm = new AudioWorkletNode(ctx, "pcm-recorder", { numberOfInputs: 1, numberOfOutputs: 0, channelCount: 1 });
+
     source.connect(splitter);
     splitter.connect(pick0, 0);
     splitter.connect(pick1, 1);
@@ -107,10 +113,11 @@ class AudioEngine {
     pick1.connect(mono);
     mono.connect(monitorGain).connect(ctx.destination);
     mono.connect(recDest);
+    mono.connect(pcm);
     mono.connect(meter);
     mono.connect(tuner);
 
-    this.#nodes = { ctx, stream, pick0, pick1, monitorGain, recDest, meter, tuner };
+    this.#nodes = { ctx, stream, pick0, pick1, monitorGain, recDest, pcm, meter, tuner };
     this.#openedWith = { inputId, latency };
     this.#meterBuf = new Float32Array(meter.fftSize);
     this.#tunerBuf = new Float32Array(tuner.fftSize);
@@ -228,12 +235,8 @@ class AudioEngine {
         this.#closeIfIdle();
         return;
       }
-      const chunks = [];
-      const rec = new MediaRecorder(recDest.stream);
-      rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
-      this.#chunks = chunks;
-      this.#recorder = rec;
-      rec.start();
+      const nodes = this.#nodes;
+      this.#recorder = this.settings.format === "webm" ? this.#webmRecorder(nodes) : this.#wavRecorder(nodes);
       this.#recStartedAt = performance.now();
       this.#recPhase = "recording";
       this.#set({ recording: true });
@@ -242,28 +245,62 @@ class AudioEngine {
     }
   }
 
+  /** Compressed take via MediaRecorder. stop() resolves with a Blob. */
+  #webmRecorder({ recDest }) {
+    const chunks = [];
+    const rec = new MediaRecorder(recDest.stream);
+    rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+    rec.start();
+    return {
+      stop: () =>
+        new Promise((resolve) => {
+          rec.onstop = () => resolve({ blob: new Blob(chunks, { type: rec.mimeType }), durationMs: null });
+          rec.stop();
+        }),
+    };
+  }
+
+  /** Lossless take: raw PCM from the worklet, encoded to 24-bit WAV. Duration is exact (from sample count). */
+  #wavRecorder({ pcm, ctx }) {
+    const chunks = [];
+    const sampleRate = ctx.sampleRate;
+    pcm.port.onmessage = (e) => e.data instanceof Float32Array && chunks.push(e.data);
+    pcm.port.postMessage("start");
+    return {
+      stop: () =>
+        new Promise((resolve) => {
+          pcm.port.onmessage = (e) => {
+            if (e.data instanceof Float32Array) chunks.push(e.data);
+            else if (e.data === "done") {
+              pcm.port.onmessage = null;
+              const frames = chunks.reduce((n, c) => n + c.length, 0);
+              resolve({ blob: encodeWav(chunks, sampleRate), durationMs: Math.round((frames / sampleRate) * 1000) });
+            }
+          };
+          pcm.port.postMessage("stop");
+        }),
+    };
+  }
+
   /** Stops the take and resolves with { blob, durationMs }, or null if nothing was recorded. */
-  stopRecording() {
+  async stopRecording() {
     if (this.#recPhase === "starting") {
       this.#cancelStart = true;
-      return Promise.resolve(null);
+      return null;
     }
     const rec = this.#recorder;
-    if (this.#recPhase !== "recording" || !rec) return Promise.resolve(null);
+    if (this.#recPhase !== "recording" || !rec) return null;
     this.#recPhase = "stopping";
-    const chunks = this.#chunks;
-    return new Promise((resolve) => {
-      rec.onstop = () => {
-        const blob = new Blob(chunks, { type: rec.mimeType });
-        const durationMs = Math.round(performance.now() - this.#recStartedAt);
-        this.#recorder = null;
-        this.#recPhase = "idle";
-        this.#set({ recording: false });
-        this.#closeIfIdle();
-        resolve({ blob, durationMs });
-      };
-      rec.stop();
-    });
+    const wallMs = Math.round(performance.now() - this.#recStartedAt);
+    try {
+      const { blob, durationMs } = await rec.stop();
+      return { blob, durationMs: durationMs ?? wallMs };
+    } finally {
+      this.#recorder = null;
+      this.#recPhase = "idle";
+      this.#set({ recording: false });
+      this.#closeIfIdle();
+    }
   }
 
   /** Peak level 0..1 of the selected input channel. */
@@ -307,9 +344,6 @@ class AudioEngine {
     return { buf: this.#tunerBuf, sampleRate: n.ctx.sampleRate };
   }
 
-  async setOutputFor(el) {
-    await this.#applySink(el);
-  }
 }
 
 export const engine = new AudioEngine();

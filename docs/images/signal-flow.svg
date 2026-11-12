@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 440" width="980" height="440" font-family="Segoe UI, Leelawadee UI, Noto Sans Thai, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#5c5c66"/>
+    </marker>
+    <style>
+      .box{fill:#ffffff;stroke:#b9b9c2;stroke-width:1}
+      .hw{fill:#eef0f3;stroke:#9a9aa4;stroke-width:1}
+      .key{fill:#e3f2f8;stroke:#0d87aa;stroke-width:1}
+      .rec{fill:#fbe9e7;stroke:#c9372f;stroke-width:1}
+      .mon{fill:#fdf2df;stroke:#dc9628;stroke-width:1}
+      .t{font-size:13px;fill:#1c1c21;font-weight:600}
+      .s{font-size:11px;fill:#5c5c66}
+      .l{stroke:#5c5c66;stroke-width:1.4;fill:none;marker-end:url(#a)}
+      .h{font-size:11px;fill:#5c5c66;font-weight:600;letter-spacing:1.5px}
+    </style>
+  </defs>
+  <rect width="980" height="440" fill="#f6f6f8"/>
+  <text x="24" y="30" class="h">AUDIO SIGNAL FLOW</text>
+
+  <!-- input chain -->
+  <rect x="24" y="60" width="120" height="56" rx="4" class="hw"/>
+  <text x="84" y="84" text-anchor="middle" class="t">กีตาร์</text>
+  <text x="84" y="101" text-anchor="middle" class="s">สายแจ็ค 6.35 มม.</text>
+
+  <rect x="176" y="60" width="140" height="56" rx="4" class="hw"/>
+  <text x="246" y="84" text-anchor="middle" class="t">Audio interface</text>
+  <text x="246" y="101" text-anchor="middle" class="s">USB · In 1 / In 2</text>
+
+  <rect x="348" y="60" width="170" height="56" rx="4" class="box"/>
+  <text x="433" y="84" text-anchor="middle" class="t">getUserMedia</text>
+  <text x="433" y="101" text-anchor="middle" class="s">ปิด echo / noise / AGC</text>
+
+  <rect x="550" y="60" width="150" height="56" rx="4" class="box"/>
+  <text x="625" y="84" text-anchor="middle" class="t">ChannelSplitter</text>
+  <text x="625" y="101" text-anchor="middle" class="s">แยก In 1 / In 2</text>
+
+  <rect x="732" y="44" width="110" height="36" rx="4" class="box"/>
+  <text x="787" y="67" text-anchor="middle" class="t">pick0 (In 1)</text>
+  <rect x="732" y="96" width="110" height="36" rx="4" class="box"/>
+  <text x="787" y="119" text-anchor="middle" class="t">pick1 (In 2)</text>
+
+  <rect x="868" y="60" width="92" height="56" rx="4" class="key"/>
+  <text x="914" y="84" text-anchor="middle" class="t">Mono</text>
+  <text x="914" y="101" text-anchor="middle" class="s">ผลรวม</text>
+
+  <path d="M144 88H172" class="l"/>
+  <path d="M316 88H344" class="l"/>
+  <path d="M518 88H546" class="l"/>
+  <path d="M700 80L728 64" class="l"/>
+  <path d="M700 96L728 112" class="l"/>
+  <path d="M842 62L864 78" class="l"/>
+  <path d="M842 114L864 98" class="l"/>
+
+  <!-- branches from mono -->
+  <path d="M914 116V160H120V196" class="l"/>
+  <path d="M370 160V196" class="l"/>
+  <path d="M620 160V196" class="l"/>
+  <path d="M860 160V196" class="l"/>
+
+  <rect x="24" y="200" width="200" height="64" rx="4" class="mon"/>
+  <text x="124" y="226" text-anchor="middle" class="t">monitorGain</text>
+  <text x="124" y="244" text-anchor="middle" class="s">Fader −∞ ถึง +6 dB · ปุ่ม Monitor</text>
+
+  <rect x="270" y="200" width="200" height="64" rx="4" class="rec"/>
+  <text x="370" y="226" text-anchor="middle" class="t">MediaStreamDestination</text>
+  <text x="370" y="244" text-anchor="middle" class="s">ส่งต่อให้ MediaRecorder</text>
+
+  <rect x="520" y="200" width="200" height="64" rx="4" class="box"/>
+  <text x="620" y="226" text-anchor="middle" class="t">Analyser 1024</text>
+  <text x="620" y="244" text-anchor="middle" class="s">ระดับเสียง peak · min/max</text>
+
+  <rect x="760" y="200" width="200" height="64" rx="4" class="box"/>
+  <text x="860" y="226" text-anchor="middle" class="t">Analyser 4096</text>
+  <text x="860" y="244" text-anchor="middle" class="s">หน้าต่าง ~85 ms</text>
+
+  <path d="M124 264V300" class="l"/>
+  <path d="M370 264V300" class="l"/>
+  <path d="M620 264V300" class="l"/>
+  <path d="M860 264V300" class="l"/>
+
+  <rect x="24" y="304" width="200" height="64" rx="4" class="hw"/>
+  <text x="124" y="330" text-anchor="middle" class="t">หูฟัง</text>
+  <text x="124" y="348" text-anchor="middle" class="s">อุปกรณ์ที่เลือกใน Output routing</text>
+
+  <rect x="270" y="304" width="200" height="64" rx="4" class="rec"/>
+  <text x="370" y="330" text-anchor="middle" class="t">ไฟล์ WebM (Opus)</text>
+  <text x="370" y="348" text-anchor="middle" class="s">Music\Attractaris + SQLite</text>
+
+  <rect x="520" y="304" width="200" height="64" rx="4" class="box"/>
+  <text x="620" y="330" text-anchor="middle" class="t">Meter · Live waveform</text>
+  <text x="620" y="348" text-anchor="middle" class="s">Channel strip · Project lane</text>
+
+  <rect x="760" y="304" width="200" height="64" rx="4" class="key"/>
+  <text x="860" y="330" text-anchor="middle" class="t">Tuner (YIN)</text>
+  <text x="860" y="348" text-anchor="middle" class="s">ความถี่ → โน้ต → cents</text>
+
+  <text x="24" y="410" class="s">ทุกสาขาแยกจากจุด Mono จุดเดียว จึงฟังสด อัด ดูระดับเสียง และจูน ได้พร้อมกันจาก input ชุดเดียว</text>
+</svg>

@@ -2,6 +2,13 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const KEYS = [
+  "edge",
+  "well",
+  "panel",
+  "dim",
+  "accent",
+  "accent-soft",
+  "rec",
   "line",
   "text",
   "fader",

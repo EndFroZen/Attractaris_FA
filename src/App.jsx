@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { engine, DEFAULT_SETTINGS } from "./audio/engine.js";
 import { player } from "./audio/player.js";
-import { forgetPeaks } from "./audio/waveform.js";
+import { forgetTake } from "./audio/waveform.js";
 import { addRecording, deleteRecording, listRecordings, loadSettings, renameRecording, saveSetting } from "./db.js";
 import { useEngineState } from "./hooks.js";
 import { applyTheme } from "./theme.js";
@@ -40,6 +40,7 @@ export default function App() {
     (key, value) => {
       setSettings((s) => ({ ...s, [key]: value }));
       engine.updateSettings({ [key]: value });
+      if (key === "outputId") player.applyOutput().catch((err) => report("เปลี่ยนอุปกรณ์เสียงออกไม่ได้: " + err));
       saveSetting(key, value).catch((err) => report("บันทึกการตั้งค่าไม่ได้: " + err));
     },
     [report]
@@ -64,6 +65,14 @@ export default function App() {
   }, [reloadTakes]);
 
   const selected = takes.find((t) => t.id === selectedId) ?? null;
+
+  // Selecting another take: stop whatever else is playing and put the cursor at its start.
+  useEffect(() => {
+    if (selectedId == null) return;
+    const { playingId, cursorTakeId } = player.state;
+    if (playingId != null && playingId !== selectedId) player.stop();
+    if (cursorTakeId !== selectedId) player.seek(0, selectedId);
+  }, [selectedId]);
 
   const toggleRecord = useCallback(async () => {
     // Busy covers "starting" too, so a second press while the input opens means stop, not a second take.
@@ -108,7 +117,7 @@ export default function App() {
       if (player.state.playingId === take.id) player.stop();
       try {
         await deleteRecording(take);
-        forgetPeaks(take.path);
+        forgetTake(take.path);
         const rows = await reloadTakes();
         if (selectedId === take.id) setSelectedId(rows[0]?.id ?? null);
         report(`ลบ ${take.name} แล้ว`);
@@ -135,7 +144,7 @@ export default function App() {
 
   // ---- keyboard: Space play/stop · R record · M monitor · T tuner ----
   const keys = useRef({});
-  keys.current = { toggleRecord, stopOrPlay };
+  keys.current = { toggleRecord, stopOrPlay, selectedId };
   useEffect(() => {
     const onKey = (e) => {
       if (e.target.closest("input, select, textarea") || e.repeat || e.ctrlKey || e.altKey || e.metaKey) return;
@@ -146,6 +155,7 @@ export default function App() {
       } else if (k === "r") keys.current.toggleRecord();
       else if (k === "m") engine.setMonitoring(!engine.state.monitoring);
       else if (k === "t") setLowerTab((t) => (t === "tuner" ? "takes" : "tuner"));
+      else if (e.key === "Home" && keys.current.selectedId != null) player.seek(0, keys.current.selectedId);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -168,7 +178,7 @@ export default function App() {
         onToggleTheme={() => updateSetting("theme", settings.theme === "light" ? "dark" : "light")}
       />
 
-      <div className="grid min-h-0 grid-cols-[264px_1fr_132px] border-t border-edge">
+      <div className="grid min-h-0 grid-cols-[264px_minmax(0,1fr)_132px] border-t border-edge">
         <Inspector settings={settings} updateSetting={updateSetting} takeCount={takes.length} />
         <div className="grid min-h-0 min-w-0 grid-rows-[minmax(180px,1fr)_minmax(260px,42%)] border-x border-edge">
           <TrackLane take={selected} settings={settings} />

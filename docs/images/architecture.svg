@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 470" width="980" height="470" font-family="Segoe UI, Leelawadee UI, Noto Sans Thai, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#5c5c66"/>
+    </marker>
+    <style>
+      .zone{fill:#ffffff;stroke:#b9b9c2;stroke-width:1}
+      .box{fill:#f1f1f4;stroke:#b9b9c2;stroke-width:1}
+      .key{fill:#e3f2f8;stroke:#0d87aa;stroke-width:1}
+      .t{font-size:13px;fill:#1c1c21;font-weight:600}
+      .s{font-size:11px;fill:#5c5c66}
+      .z{font-size:11px;fill:#5c5c66;font-weight:600;letter-spacing:1.5px}
+      .l{stroke:#5c5c66;stroke-width:1.4;fill:none;marker-end:url(#a);marker-start:url(#a)}
+      .lt{font-size:11px;fill:#0d87aa}
+    </style>
+  </defs>
+  <rect width="980" height="470" fill="#f6f6f8"/>
+
+  <!-- frontend -->
+  <rect x="24" y="24" width="600" height="420" rx="6" class="zone"/>
+  <text x="40" y="48" class="z">FRONTEND · REACT + TAILWIND (WEBVIEW2)</text>
+
+  <text x="40" y="78" class="s">หน้าจอ (src/components)</text>
+  <rect x="40" y="88" width="132" height="40" rx="4" class="box"/><text x="106" y="113" text-anchor="middle" class="t">Transport</text>
+  <rect x="182" y="88" width="132" height="40" rx="4" class="box"/><text x="248" y="113" text-anchor="middle" class="t">Inspector</text>
+  <rect x="324" y="88" width="132" height="40" rx="4" class="box"/><text x="390" y="113" text-anchor="middle" class="t">TrackLane</text>
+  <rect x="466" y="88" width="142" height="40" rx="4" class="box"/><text x="537" y="113" text-anchor="middle" class="t">ChannelStrip</text>
+  <rect x="40" y="138" width="132" height="40" rx="4" class="box"/><text x="106" y="163" text-anchor="middle" class="t">TakesPool</text>
+  <rect x="182" y="138" width="132" height="40" rx="4" class="box"/><text x="248" y="163" text-anchor="middle" class="t">TunerPanel</text>
+  <rect x="324" y="138" width="132" height="40" rx="4" class="box"/><text x="390" y="163" text-anchor="middle" class="t">StatusBar</text>
+  <rect x="466" y="138" width="142" height="40" rx="4" class="box"/><text x="537" y="163" text-anchor="middle" class="t">App (state, keys)</text>
+
+  <path d="M324 184V214" class="l"/>
+  <text x="334" y="204" class="lt">useSyncExternalStore</text>
+
+  <text x="40" y="236" class="s">ส่วนประมวลผลเสียง (src/audio)</text>
+  <rect x="40" y="246" width="180" height="62" rx="4" class="key"/>
+  <text x="130" y="272" text-anchor="middle" class="t">engine.js</text>
+  <text x="130" y="290" text-anchor="middle" class="s">input · monitor · record</text>
+  <rect x="234" y="246" width="180" height="62" rx="4" class="key"/>
+  <text x="324" y="272" text-anchor="middle" class="t">player.js</text>
+  <text x="324" y="290" text-anchor="middle" class="s">เล่นเทค · cursor · seek</text>
+  <rect x="428" y="246" width="180" height="62" rx="4" class="key"/>
+  <text x="518" y="272" text-anchor="middle" class="t">waveform.js · pitch.js</text>
+  <text x="518" y="290" text-anchor="middle" class="s">decode · peaks · YIN</text>
+
+  <rect x="40" y="330" width="280" height="62" rx="4" class="box"/>
+  <text x="180" y="356" text-anchor="middle" class="t">db.js</text>
+  <text x="180" y="374" text-anchor="middle" class="s">settings · recordings (SQL)</text>
+  <rect x="334" y="330" width="274" height="62" rx="4" class="box"/>
+  <text x="471" y="356" text-anchor="middle" class="t">theme.js</text>
+  <text x="471" y="374" text-anchor="middle" class="s">ธีมมืด/สว่าง · palette ให้ canvas</text>
+
+  <!-- backend -->
+  <rect x="670" y="24" width="286" height="420" rx="6" class="zone"/>
+  <text x="686" y="48" class="z">BACKEND · TAURI 2 (RUST)</text>
+
+  <rect x="686" y="70" width="254" height="96" rx="4" class="key"/>
+  <text x="813" y="96" text-anchor="middle" class="t">Commands (lib.rs)</text>
+  <text x="813" y="116" text-anchor="middle" class="s">save_recording</text>
+  <text x="813" y="132" text-anchor="middle" class="s">read_recording</text>
+  <text x="813" y="148" text-anchor="middle" class="s">delete_recording</text>
+
+  <rect x="800" y="186" width="140" height="62" rx="4" class="key"/>
+  <text x="870" y="212" text-anchor="middle" class="t">plugin-sql</text>
+  <text x="870" y="230" text-anchor="middle" class="s">SQLite + migrations</text>
+
+  <rect x="686" y="330" width="110" height="62" rx="4" class="box"/>
+  <text x="741" y="356" text-anchor="middle" class="t">Music\</text>
+  <text x="741" y="374" text-anchor="middle" class="s">Attractaris\*.webm</text>
+  <rect x="810" y="330" width="130" height="62" rx="4" class="box"/>
+  <text x="875" y="356" text-anchor="middle" class="t">attractaris.db</text>
+  <text x="875" y="374" text-anchor="middle" class="s">AppData</text>
+
+  <path d="M741 170V326" class="l"/>
+  <path d="M875 252V326" class="l"/>
+  <path d="M180 396V416H646V118H682" class="l"/>
+  <path d="M646 218H796" class="l"/>
+  <text x="190" y="434" class="lt">invoke() ส่งไฟล์เป็น raw bytes · SQL ผ่าน plugin (Tauri IPC)</text>
+</svg>

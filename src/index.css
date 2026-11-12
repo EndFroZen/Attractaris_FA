@@ -77,7 +77,7 @@
   body,
   #root {
     height: 100%;
-    overflow: hidden;
+    overflow: clip; /* unlike hidden, can't be scrolled programmatically, so the workspace never shifts */
   }
   body {
     @apply bg-base text-[12px] text-text font-sans antialiased select-none;

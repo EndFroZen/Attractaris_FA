@@ -6,6 +6,10 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   clearScreen: false,
+  build: {
+    // Keep the AudioWorklet as a real file: audioWorklet.addModule() should load a URL, not an inlined data: URI.
+    assetsInlineLimit: (file) => (file.endsWith("-worklet.js") ? false : undefined),
+  },
   server: {
     port: 1420,
     strictPort: true,

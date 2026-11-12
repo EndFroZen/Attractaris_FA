@@ -7,6 +7,10 @@ const CHANNELS = [
   { value: "1", label: "In 2" },
   { value: "mix", label: "1+2" },
 ];
+const FORMATS = [
+  { value: "wav", label: "WAV", note: "WAV 24-bit PCM ไม่บีบอัด คุณภาพเต็ม เหมาะสำหรับนำไปมิกซ์ (~8.6 MB/นาที)" },
+  { value: "webm", label: "WebM", note: "WebM Opus บีบอัด ไฟล์เล็ก เหมาะสำหรับฟังและซ้อม (~1 MB/นาที)" },
+];
 const LATENCIES = [
   { value: "0", label: "Low", note: "หน่วงต่ำสุด อาจมีเสียงแตก" },
   { value: "interactive", label: "Normal", note: "ค่าแนะนำ" },
@@ -80,10 +84,13 @@ export default function Inspector({ settings, updateSetting, takeCount }) {
         <p className="px-2 pb-1 text-[10px] leading-4 text-dim">ใช้หูฟังเท่านั้น ถ้าเปิดลำโพงเสียงจะหอน</p>
       </Section>
 
-      <Section title="Storage">
+      <Section title="Recording">
+        <Row label="Format">
+          <Segmented options={FORMATS} value={settings.format} onChange={(v) => updateSetting("format", v)} disabled={recording} />
+        </Row>
+        <p className="px-2 pb-1 text-[10px] leading-4 text-dim">{FORMATS.find((f) => f.value === settings.format)?.note}</p>
         <Info label="Folder" value="Music\Attractaris" />
         <Info label="Takes" value={String(takeCount)} />
-        <Info label="Format" value="WebM · Opus" />
       </Section>
 
       <Section title="Shortcuts" defaultOpen={false}>
@@ -91,6 +98,11 @@ export default function Inspector({ settings, updateSetting, takeCount }) {
         <Info label="Record" value="R" />
         <Info label="Monitor" value="M" />
         <Info label="Tuner" value="T" />
+        <Info label="Zoom in / out" value="H / G" />
+        <Info label="Zoom to fit" value="F" />
+        <Info label="Zoom at mouse" value="Ctrl+Wheel" />
+        <Info label="Cursor to start" value="Home" />
+        <Info label="Set cursor" value="Click ruler" />
       </Section>
     </aside>
   );
